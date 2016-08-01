@@ -17,9 +17,63 @@
 <body>
     <div class="row">
       <div id="container" class="col-xs-12 col-md-6 col-md-offset-3">
+        <div class="panel panel-success">
+            <div class="panel-heading">Exceed software chatroom</div>
+            <div class="panel-body">
+                <textarea disabled class="form-control" id="chat-list"></textarea>
+                <br />
+                <div>
+                    <input class="form-control" id="message" />
+                </div>
+            </div>
+        </div>
       </div>
     </div>
-    <script src='bundle.js'></script>
+
+    <script type='text/javascript'>
+        /* Linking html to javascript via jQuery*/
+        var chatList = $('#chat-list');
+        var SendButton = $('#btn-send');
+        var MessageInput = $('#message');
+        var currentMessage = '';
+        MessageInput.keyup(function(event) {
+            if (event.keyCode === 13) { //When press Enter
+                var message = MessageInput.val(); //Get message from html element
+                var date = new Date();
+                var now = date.toUTCString();
+                $.ajax({
+                    url: 'http://10.32.176.4/workshop/' + 'KANOON : ' + message + " (" + now +") "
+                });
+                MessageInput.val('');
+            }
+        });
+
+        setInterval(function() {
+            //Run every 1 second (1000 milliseconds)
+            $.ajax({
+                    url: 'http://10.32.176.4/workshop'
+                })
+                .done(function(data) {
+                  if(data !== currentMessage){
+                    var oldChat = chatList.val();
+                    chatList.html(oldChat + '\n' + data); //set message to html element
+                    currentMessage = data;
+                    chatList.scrollTop(chatList[0].scrollHeight);
+                  }
+                });
+        }, 1000);
+
+        /* Send message to server*/
+        SendButton.click(function() {
+            var message = MessageInput.val(); //Get message from html element
+            $.ajax({
+                    url: 'http://10.32.176.4/workshop/' + 'KANOON : ' + message
+                })
+                .done(function(data) {
+                    alert('Success');
+                });
+        });
+    </script>
 </body>
 
 </html>
