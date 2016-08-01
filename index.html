@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
     <title>Document</title>
     <!-- Latest compiled and minified CSS -->
@@ -11,42 +12,68 @@
     <!-- <script src="/stylesheets/jquery-3.1.0.min.js"></script> -->
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="/libs/exceed.lib.js"></script>
+    <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
-    <div id="container">
-      <textarea id="chat-list"></textarea>
-      <input id="message" />
-      <button id="btn-send">Send</button>
+    <div class="row">
+      <div id="container" class="col-xs-12 col-md-6 col-md-offset-3">
+          <div class="panel panel-success">
+              <div class="panel-heading">Exceed software chatroom</div>
+              <div class="panel-body">
+                  <textarea disabled class="form-control" id="chat-list"></textarea>
+                  <br />
+                  <div>
+                      <input class="form-control" id="message" />
+                  </div>
+              </div>
+          </div>
+      </div>
     </div>
 
+
     <script type='text/javascript'>
-      var chatList = $('#chat-list');
-      var SendButton = $('#btn-send');
-      var MessageInput = $('#message');
-
-      setInterval(function() {
-        //Run every 1 second (1000 milliseconds)
-        $.ajax({
-          url: 'http://10.32.176.4/workshop'
-        })
-        .done(function(data) {
-          chatList.html(data); //set message to html element
+        var chatList = $('#chat-list');
+        var SendButton = $('#btn-send');
+        var MessageInput = $('#message');
+        var currentMessage = '';
+        MessageInput.keyup(function(event) {
+            if (event.keyCode === 13) { //When press Enter
+                var message = MessageInput.val(); //Get message from html element
+                var date = new Date();
+                var now = date.toUTCString();
+                $.ajax({
+                    url: 'http://10.32.176.4/workshop/' + 'KANOON : ' + message + " (" + now +") "
+                });
+                MessageInput.val('');
+            }
         });
-      },1000);
 
-      /* Send message to server*/
-      SendButton.click(function() {
-        var message = MessageInput.val(); //Get message from html element
-        $.ajax({
-          url: 'http://10.32.176.4/workshop/' + 'KANOON : ' + message
-        })
-        .done(function(data) {
-          alert('Success');
+        setInterval(function() {
+            //Run every 1 second (1000 milliseconds)
+            $.ajax({
+                    url: 'http://10.32.176.4/workshop'
+                })
+                .done(function(data) {
+                  if(data !== currentMessage){
+                    var oldChat = chatList.val();
+                    chatList.html(oldChat + '\n' + data); //set message to html element
+                    currentMessage = data;
+                    chatList.scrollTop(chatList[0].scrollHeight);
+                  }
+                });
+        }, 1000);
+
+        /* Send message to server*/
+        SendButton.click(function() {
+            var message = MessageInput.val(); //Get message from html element
+            $.ajax({
+                    url: 'http://10.32.176.4/workshop/' + 'KANOON : ' + message
+                })
+                .done(function(data) {
+                    alert('Success');
+                });
         });
-      });
-
-
     </script>
 </body>
 
