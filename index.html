@@ -8,13 +8,46 @@
     <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
     <!-- Optional theme -->
     <link rel="stylesheet" href="/stylesheets/bootstrap-theme.min.css">
-    <script src="/stylesheets/jquery-3.1.0.min.js"></script>
+    <!-- <script src="/stylesheets/jquery-3.1.0.min.js"></script> -->
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="/libs/exceed.lib.js"></script>
 </head>
 
 <body>
-    <div id="container"></div>
-    <script src="bundle.js"></script>
+    <div id="container">
+      <textarea id="chat-list"></textarea>
+      <input id="message" />
+      <button id="btn-send">Send</button>
+    </div>
+
+    <script type='text/javascript'>
+      var chatList = $('#chat-list');
+      var SendButton = $('#btn-send');
+      var MessageInput = $('#message');
+
+      setInterval(function() {
+        //Run every 1 second (1000 milliseconds)
+        $.ajax({
+          url: 'http://10.32.176.4/workshop'
+        })
+        .done(function(data) {
+          chatList.html(data); //set message to html element
+        });
+      },1000);
+
+      /* Send message to server*/
+      SendButton.click(function() {
+        var message = MessageInput.val(); //Get message from html element
+        $.ajax({
+          url: 'http://10.32.176.4/workshop/' + 'KANOON : ' + message
+        })
+        .done(function(data) {
+          alert('Success');
+        });
+      });
+
+
+    </script>
 </body>
 
 </html>
